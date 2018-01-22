@@ -1,8 +1,5 @@
 """
-Sensor for checking the size of your HA database file. 
-
-For more details about this platform, please refer to the documentation at
-https://home-assistant.io/components/sensor.database
+Sensor for checking the size of a file.
 """
 import logging
 import os
@@ -15,33 +12,32 @@ PATH = "/Users/robincole/.homeassistant/home-assistant_v2.db"
 
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
-    """Set up the database sensor."""
-    db = Database(PATH)
-    add_devices([db], True)
+    """Set up the filezie sensor."""
+    add_devices([Filesize(PATH)], True)
 
 
-class Database(Entity):
+class Filesize(Entity):
     """Representation of the HA database."""
-    ICON = 'mdi:harddisk'
+    ICON = 'mdi:file'
 
     def __init__(self, path):
         """Initialize the data object."""
         self._path = path   # Need to check its a valid path
         self._size = None
-        self._name = "Database_sensor"
-        self._attributes = {}
+        self._name = "filesize_sensor"
+        self._attributes = {'Path': PATH}
         self._unit_of_measurement = 'MB'
         self.update()
 
     def update(self):
-        """Get the size of the database."""
-        self._size = self.get_db_size(self._path)
+        """Get the size of the file."""
+        self._size = self.get_file_size(self._path)
 
-    def get_db_size(self, path):
+    def get_file_size(self, path):
         statinfo = os.stat(path)
         decimals = 2
-        db_size = round(statinfo.st_size/1e6, decimals)
-        return db_size
+        file_size = round(statinfo.st_size/1e6, decimals)
+        return file_size
 
     @property
     def name(self):
