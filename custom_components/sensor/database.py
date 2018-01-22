@@ -30,7 +30,7 @@ class Database(Entity):
         self._size = None
         self._name = "Database_sensor"
         self._attributes = {}
-        self._unit_of_measurement = 'MiB'
+        self._unit_of_measurement = 'MB'
         self.update()
 
     def update(self):
