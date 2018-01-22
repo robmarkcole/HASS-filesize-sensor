@@ -1,8 +1,8 @@
 """
-Sensor for checking the status of Hue sensors.
+Sensor for checking the size of your HA database file. 
 
 For more details about this platform, please refer to the documentation at
-https://home-assistant.io/components/sensor.hue/
+https://home-assistant.io/components/sensor.database
 """
 import logging
 import os
