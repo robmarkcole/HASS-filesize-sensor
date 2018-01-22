@@ -3,17 +3,30 @@ Sensor for checking the size of a file.
 """
 import logging
 import os
+import voluptuous as vol
 
 from homeassistant.helpers.entity import Entity
+import homeassistant.helpers.config_validation as cv
+from homeassistant.components.sensor import PLATFORM_SCHEMA
 
 _LOGGER = logging.getLogger(__name__)
 
-PATH = "/Users/robincole/.homeassistant/home-assistant_v2.db"
+
+CONF_FILE_PATHS = 'file_paths'
+
+PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
+    vol.Required(CONF_FILE_PATHS): cv.ensure_list,
+})
 
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
-    """Set up the filezie sensor."""
-    add_devices([Filesize(PATH)], True)
+    """Set up the file size sensor."""
+    sensors = []
+    for path in config.get(CONF_FILE_PATHS):
+        _LOGGER.warning("File path: {}".format(path))
+        sensors.append(Filesize(path))
+
+    add_devices(sensors, True)
 
 
 class Filesize(Entity):
@@ -24,8 +37,8 @@ class Filesize(Entity):
         """Initialize the data object."""
         self._path = path   # Need to check its a valid path
         self._size = None
-        self._name = "filesize_sensor"
-        self._attributes = {'Path': PATH}
+        self._name = path.split("/")[-1]
+        self._attributes = {'Path': path}
         self._unit_of_measurement = 'MB'
         self.update()
 
