@@ -1,11 +1,13 @@
 """
 Sensor for checking the size of a file.
 """
+import datetime
 import logging
 import os
 import voluptuous as vol
 
 from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.template import DATE_STR_FORMAT
 import homeassistant.helpers.config_validation as cv
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 
@@ -15,7 +17,7 @@ _LOGGER = logging.getLogger(__name__)
 CONF_FILE_PATHS = 'file_paths'
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
-    vol.Required(CONF_FILE_PATHS): cv.ensure_list,
+    vol.Required(CONF_FILE_PATHS): [cv.isfile],
 })
 
 
@@ -23,7 +25,6 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     """Set up the file size sensor."""
     sensors = []
     for path in config.get(CONF_FILE_PATHS):
-        _LOGGER.warning("File path: {}".format(path))
         sensors.append(Filesize(path))
 
     add_devices(sensors, True)
@@ -37,8 +38,8 @@ class Filesize(Entity):
         """Initialize the data object."""
         self._path = path   # Need to check its a valid path
         self._size = None
+        self._last_updated = None
         self._name = path.split("/")[-1]
-        self._attributes = {'Path': path}
         self._unit_of_measurement = 'MB'
         self.update()
 
@@ -51,6 +52,12 @@ class Filesize(Entity):
         decimals = 2
         file_size = round(statinfo.st_size/1e6, decimals)
         return file_size
+
+    def get_last_updated(self, path):
+        statinfo = os.stat(path)
+        last_updated = datetime.datetime.fromtimestamp(statinfo.st_mtime)
+        last_updated = last_updated.strftime(DATE_STR_FORMAT)
+        return last_updated
 
     @property
     def name(self):
@@ -69,8 +76,11 @@ class Filesize(Entity):
 
     @property
     def device_state_attributes(self):
-        """Attributes."""
-        return self._attributes
+        """Return other details about the sensor state."""
+        attrs = {}
+        attrs['path'] = self._path
+        attrs['last_updated'] = self.get_last_updated(self._path)
+        return attrs
 
     @property
     def unit_of_measurement(self):
