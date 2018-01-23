@@ -5,7 +5,7 @@ Custom component for displaying the size of a files. Discussion on [this thread]
 There are quite a few posts where people want to know the size of a file, for example their HA database file. This custom component creates sensors which displays the size of a files in MB. The configured file path for a sensor is displayed as an attribute.
 
 ## Usage
-Add the contents of **custom_components/sensors** to your config.
+Place the custom_components folder in your configuration directory (or add its contents to an existing custom_components folder).
 Add absolute paths to your config following:
 
 ```yaml
