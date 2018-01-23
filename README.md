@@ -9,9 +9,16 @@ Add the contents of **custom_components/sensors** to your config.
 Add absolute paths to your config following:
 
 ```yaml
+# On Mac
 sensor:
   - platform: filesize
     file_paths:
-      - /Users/robincole/.homeassistant/home-assistant_v2.db
-      - /Users/robincole/.homeassistant/home-assistant.log
+      - /Users/username/.homeassistant/home-assistant_v2.db
+      - /Users/username/.homeassistant/home-assistant.log
+
+# On Hassio or Docker (e.g. on a Synology NAS)
+sensor:
+  - platform: filesize
+    file_paths:
+      - /config/home-assistant_v2.db
   ```
