@@ -1,5 +1,8 @@
 """
-Sensor for checking the size of a file.
+Sensor for monitoring the size of a file.
+
+For more details about this platform, please refer to the documentation at
+https://home-assistant.io/components/sensor.filesize/
 """
 import datetime
 import logging
@@ -32,6 +35,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
 class Filesize(Entity):
     """Representation of the HA database."""
+
     ICON = 'mdi:file'
 
     def __init__(self, path):
