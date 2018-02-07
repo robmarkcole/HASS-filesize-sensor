@@ -11,7 +11,6 @@ import os
 import voluptuous as vol
 
 from homeassistant.helpers.entity import Entity
-from homeassistant.helpers.template import DATE_STR_FORMAT
 import homeassistant.helpers.config_validation as cv
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 
@@ -46,24 +45,24 @@ class Filesize(Entity):
         self._last_updated = None
         self._name = path.split("/")[-1]
         self._unit_of_measurement = 'MB'
-        self.update()
 
     def update(self):
         """Get the size of the file."""
         self._size = self.get_file_size(self._path)
+        self._last_updated = self.get_last_updated(self._path)
 
     def get_file_size(self, path):
-        """Returns the size of the file in MB."""
+        """Return the size of the file in MB."""
         statinfo = os.stat(path)
         decimals = 2
         file_size = round(statinfo.st_size/1e6, decimals)
         return file_size
 
     def get_last_updated(self, path):
-        """Returns the time the file was last modified."""
+        """Return the time the file was last modified."""
         statinfo = os.stat(path)
         last_updated = datetime.datetime.fromtimestamp(statinfo.st_mtime)
-        last_updated = last_updated.strftime(DATE_STR_FORMAT)
+        last_updated = last_updated.isoformat(' ')
         return last_updated
 
     @property
@@ -86,7 +85,7 @@ class Filesize(Entity):
         """Return other details about the sensor state."""
         attrs = {}
         attrs['path'] = self._path
-        attrs['last_updated'] = self.get_last_updated(self._path)
+        attrs['last_updated'] = self._last_updated
         return attrs
 
     @property
