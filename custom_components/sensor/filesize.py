@@ -7,6 +7,7 @@ https://home-assistant.io/components/sensor.filesize/
 import datetime
 import logging
 import os
+
 import voluptuous as vol
 
 from homeassistant.helpers.entity import Entity
@@ -18,9 +19,11 @@ _LOGGER = logging.getLogger(__name__)
 
 
 CONF_FILE_PATHS = 'file_paths'
+ICON = 'mdi:file'
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
-    vol.Required(CONF_FILE_PATHS): [cv.isfile],
+    vol.Required(CONF_FILE_PATHS):
+        vol.All(cv.ensure_list, [cv.isfile]),
 })
 
 
@@ -34,9 +37,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
 
 class Filesize(Entity):
-    """Representation of the HA database."""
-
-    ICON = 'mdi:file'
+    """Encapsulates file size information."""
 
     def __init__(self, path):
         """Initialize the data object."""
@@ -78,7 +79,7 @@ class Filesize(Entity):
     @property
     def icon(self):
         """Icon to use in the frontend, if any."""
-        return self.ICON
+        return ICON
 
     @property
     def device_state_attributes(self):
